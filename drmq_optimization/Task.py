@@ -8,7 +8,7 @@ import pickle
 import time
 
 import aiormq
-from optuna.trial import TrialState, Trial
+from optuna.trial import TrialState
 
 import Message as m
 
@@ -34,7 +34,7 @@ class Task:
         return None
 
     async def run(self):
-        self.response_queue = await self.channel.declare_queue(self.uuid)
+        self.response_queue = await self.channel.declare_queue(self.uuid, auto_delete=True)
         print(f"Listening on {self.uuid}")
         self.task_queue = await self.channel.declare_queue(self.tq_name)
         await self.post_task()
@@ -52,23 +52,19 @@ class Task:
                         body = pickle.loads(message.body)
                         await self.handle_message(body)
                         await message.ack()
-                    except aio_pika.exceptions.QueueEmpty:
-                        await asyncio.sleep(0)
-                        continue
-                    except asyncio.exceptions.TimeoutError:
-                        #sleep for 3 seconds and retry
-                        await asyncio.sleep(3)
-                        continue
-                    except aio_pika.exceptions.ChannelPreconditionFailed:
-                        await asyncio.sleep(3)
-                        continue
-                    except aiormq.exceptions.ChannelInvalidStateError:
+                    except (
+                            aio_pika.exceptions.ChannelPreconditionFailed,
+                            aio_pika.exceptions.QueueEmpty, 
+                            asyncio.exceptions.TimeoutError,
+                            aiormq.exceptions.ChannelInvalidStateError
+                        ):
                         await asyncio.sleep(3)
                         continue
                 await asyncio.sleep(0)
             return
         except Exception as e:
             print(traceback.format_exc())
+            self.report_failure()
             return
 
     def report_failure(self):

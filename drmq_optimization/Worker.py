@@ -4,6 +4,7 @@ import traceback
 import pickle
 import time
 import pika
+import pika.adapters.blocking_connection
 from Message import ParamSuggestion, PruneResponse, CancelOpt, AcceptedWorker, DeclinedWorker
 from Message import TaskResponseAccepted, TaskResponseIntermediate, TaskResponseCancel
 from Message import TaskResponsePruneQuery, TaskResponseCompleted
@@ -119,7 +120,7 @@ class TrialPruned(Exception):
     pass
 
 class TaskQueueNegotiator:
-    def __init__(self, tq_name, channel):
+    def __init__(self, tq_name, channel: pika.adapters.blocking_connection.BlockingChannel):
         self.communicator = Communicator(tq_name, None, channel)
         self.active_task = None
         self.channel = channel
@@ -130,7 +131,7 @@ class TaskQueueNegotiator:
             print("negotiating task")
             param_message: ParamSuggestion= body
             new_in_channel = str(uuid4())
-            self.channel.queue_declare(queue=new_in_channel)
+            self.channel.queue_declare(queue=new_in_channel, auto_delete=True)
             new_comm = Communicator(new_in_channel, props.reply_to, self.channel)
             new_comm.send_to_out(TaskResponseAccepted(new_in_channel))
             time_in = time.time()
