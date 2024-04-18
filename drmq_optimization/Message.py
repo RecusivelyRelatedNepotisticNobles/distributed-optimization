@@ -1,12 +1,22 @@
 from collections import namedtuple
 from enum import Enum
 
+# Scheduler to worker
+class ParamMessage:
+    def __init__(self, params, idx_train, idx_eval, model_type):
+        self.params = params
+        self.idx_train = idx_train
+        self.idx_eval = idx_eval
+        self.model_type = model_type
+
 ParamSuggestion = namedtuple("ParamSuggestion", ["uuid", "pm"])
 PruneResponse = namedtuple("PruneResponse", ["uuid", "should_prune"])
 CancelOpt = namedtuple("CancelOpt", ["uuid"])
 AcceptedWorker = namedtuple("AcceptedWorker", ["uuid"])
 DeclinedWorker = namedtuple("DeclinedWorker", ["uuid"])
 
+
+#Worker to scheduler
 class TaskResponse(Enum):
     Accepted = 1
     IntermediateValue = 2
@@ -42,10 +52,3 @@ class TaskResponseCompleted(TaskResponseBase):
     def __init__(self, final_eval):
         super().__init__(TaskResponse.Completed)
         self.final_eval = final_eval
-
-class ParamMessage:
-    def __init__(self, params, idx_train, idx_eval, model_type):
-        self.params = params
-        self.idx_train = idx_train
-        self.idx_eval = idx_eval
-        self.model_type = model_type

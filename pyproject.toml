@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "drmq-optimization"
+version = "0.1.0"
+description = "Distributed hyper-parameter optimization leveraging a rabbitmq server and optuna"
+authors = ["Dmitriy Balmashnov"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+optuna = "^3.6.1"
+aio-pika = "^9.4.1"
+pika = "^1.3.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
