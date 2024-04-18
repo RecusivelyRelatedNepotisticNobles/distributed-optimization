@@ -5,7 +5,7 @@ import optuna
 from optuna import Trial, Study
 from optuna.distributions import BaseDistribution
 from typing import Callable, Dict, List
-from dc1.distributed.Message import Task, ParamMessage
+from .Message import Task, ParamMessage
 from copy import copy
 
 import nest_asyncio

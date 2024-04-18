@@ -5,17 +5,23 @@ import pickle
 import time
 import pika
 import pika.adapters.blocking_connection
-from Message import ParamSuggestion, PruneResponse, CancelOpt, AcceptedWorker, DeclinedWorker
-from Message import TaskResponseAccepted, TaskResponseIntermediate, TaskResponseCancel
-from Message import TaskResponsePruneQuery, TaskResponseCompleted
-from Message import ParamMessage
+from .Message import ParamSuggestion, PruneResponse, CancelOpt, AcceptedWorker, DeclinedWorker
+from .Message import TaskResponseAccepted, TaskResponseIntermediate, TaskResponseCancel
+from .Message import TaskResponsePruneQuery, TaskResponseCompleted
+from .Message import ParamMessage
 
 class Communicator:
     def __init__(self, in_, out_, channel: pika.BlockingConnection):
         self._in = in_
         print(f"listening to {self._in}")
         self._out = out_
-        print(f"sending to {self._out}")
+        print(f"sendin
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+
+engine = create_engine(os.environ['DATABASE_URL'])
+Session = sessionmaker(bind=engine)
+g to {self._out}")
         self.channel = channel
 
     def get_message(self):

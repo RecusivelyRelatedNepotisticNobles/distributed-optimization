@@ -10,7 +10,7 @@ import time
 import aiormq
 from optuna.trial import TrialState
 
-import Message as m
+import .Message as m
 
 class TaskState(Enum):
     Starting = 1
